@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ExpenseList } from '@/components/ExpenseList';
 import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 import { MonthSelector } from '@/components/MonthSelector';
+import { ExpensePieChart } from '@/components/ExpensePieChart';
 import { formatCurrency, getCurrentMonth, getExpensesForMonth, calculateCategoryTotals } from '@/lib/expense-utils';
 import { getExpenses, getBudgets } from '@/lib/storage';
 
@@ -158,6 +159,15 @@ export function Dashboard() {
             </CardContent>
           </Card>
         )}
+
+        {/* Spending Breakdown Chart */}
+        <div className="mb-8">
+          <ExpensePieChart
+            categoryTotals={categoryTotals}
+            monthlyTotal={monthlyTotal}
+            selectedMonth={selectedMonth}
+          />
+        </div>
 
         {/* Recent Expenses */}
         <Card className="bg-gradient-card shadow-card border-0">
