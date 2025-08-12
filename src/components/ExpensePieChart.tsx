@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import { CategoryTotal } from '@/types/expense';
-import { getCategoryColor } from '@/lib/expense-utils';
+import { getCategoryColor, getChartColor } from '@/lib/expense-utils';
 import { useMoney } from '@/contexts/MoneyContext';
 
 interface ExpensePieChartProps {
@@ -84,7 +84,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
 
   if (categoryTotals.length === 0) {
     return (
-      <Card className="bg-gradient-card shadow-card border-0">
+      <Card className="bg-card-elevated shadow-elevated border-border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-accent" />
@@ -108,7 +108,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+        <div className="bg-card-elevated border border-border rounded-lg p-3 shadow-elevated">
           <p className="font-semibold">{data.category}</p>
           <p className="text-sm text-muted-foreground">
             {format(data.totalCents)} ({data.percentage}%)
@@ -123,7 +123,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
   };
 
   return (
-    <Card className="bg-gradient-card shadow-card border-0">
+    <Card className="bg-card-elevated shadow-elevated border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-accent" />
@@ -152,7 +152,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
                 {chartData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={getCategoryColor(entry.category)}
+                    fill={getChartColor(index)}
                     className="hover:opacity-80 transition-opacity"
                   />
                 ))}
@@ -180,7 +180,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
             >
               <div 
                 className="w-3 h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: getCategoryColor(item.category) }}
+                style={{ backgroundColor: getChartColor(index) }}
               />
               <span className="truncate">{item.category}</span>
               <span className="text-muted-foreground ml-auto">{item.percentage}%</span>

@@ -31,7 +31,7 @@ export function MonthSelector({ selectedMonth, onMonthChange }: MonthSelectorPro
   };
 
   return (
-    <Card className="mb-6 bg-gradient-card shadow-card border-0">
+    <Card className="mb-6 bg-card shadow-card border border-border">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <Button

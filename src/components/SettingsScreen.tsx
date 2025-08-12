@@ -66,7 +66,7 @@ function SortableCategoryItem({
     <div 
       ref={setNodeRef} 
       style={style}
-      className="flex items-center gap-3 p-3 border rounded-lg bg-card text-card-foreground"
+                       className="flex items-center gap-3 p-3 border border-border rounded-lg bg-card text-foreground"
     >
       <div
         {...attributes}
@@ -371,9 +371,9 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <div className="bg-card rounded-lg shadow-lg border text-card-foreground">
+                         <div className="bg-card-elevated rounded-lg shadow-elevated border border-border text-foreground">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
+                               <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
               <h2 className="text-2xl font-bold">Settings</h2>
               <p className="text-muted-foreground">Customize your expense tracker</p>
@@ -581,7 +581,7 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
             </Card>
 
             {/* Save Button */}
-            <div className="flex justify-end pt-4 border-t">
+                                   <div className="flex justify-end pt-4 border-t border-border">
               <Button
                 onClick={handleSave}
                 disabled={!hasUnsavedChanges || isSaving}

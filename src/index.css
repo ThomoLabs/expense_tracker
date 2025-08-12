@@ -1,3 +1,4 @@
+@import './styles/theme.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -54,6 +55,7 @@ All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body
     /* Financial UI specific colors */
     --success: 120 76% 50%;           /* Green - meets contrast */
     --warning: 38 92% 50%;            /* Orange - meets contrast */
+    --error: 0 72% 51%;               /* Red - meets contrast */
     --expense-red: 0 72% 51%;         /* Red - meets contrast */
     --income-green: 120 76% 50%;      /* Green - meets contrast */
     
@@ -88,7 +90,7 @@ All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body
     --background: 222 47% 11%;        /* Very dark blue-gray - not pure black */
     --foreground: 210 40% 98%;        /* Very light text - meets contrast on dark */
     
-    --card: 222 47% 11%;              /* Same as background for cards */
+    --card: 217 33% 17%;              /* Elevated card background */
     --card-foreground: 210 40% 98%;   /* Light text on dark */
     
     --popover: 222 47% 11%;           /* Same as background for popovers */
@@ -108,6 +110,9 @@ All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body
     
     --destructive: 0 63% 31%;         /* Darker red - meets contrast with light text */
     --destructive-foreground: 210 40% 98%; /* Light text on dark red */
+    --error: 0 72% 61%;                /* Light red - meets contrast */
+    --success: 120 76% 60%;            /* Light green - meets contrast */
+    --warning: 38 92% 60%;            /* Light orange - meets contrast */
     
     --border: 217 33% 17%;            /* Dark gray border */
     --input: 217 33% 17%;             /* Dark gray input border */

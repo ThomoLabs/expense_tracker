@@ -50,7 +50,7 @@ export function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-primary">
               Expense Tracker
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -89,7 +89,7 @@ export function Dashboard() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card className="bg-gradient-card shadow-card border-0">
+          <Card className="bg-card-elevated shadow-elevated border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Spent This Month
@@ -107,7 +107,7 @@ export function Dashboard() {
           </Card>
 
           {monthlyBudget && (
-            <Card className="bg-gradient-card shadow-card border-0">
+            <Card className="bg-card-elevated shadow-elevated border-border">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   Budget Progress
@@ -118,11 +118,11 @@ export function Dashboard() {
                 <div className="text-3xl font-bold">
                   {budgetProgress !== null ? `${budgetProgress.toFixed(0)}%` : 'N/A'}
                 </div>
-                <div className="w-full bg-secondary rounded-full h-2 mt-2">
+                <div className="w-full bg-muted rounded-full h-2 mt-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-300 ${
                       budgetProgress && budgetProgress > 100 
-                        ? 'bg-destructive' 
+                        ? 'bg-error' 
                         : budgetProgress && budgetProgress > 80
                         ? 'bg-warning'
                         : 'bg-success'

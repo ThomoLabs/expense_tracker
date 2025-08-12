@@ -113,15 +113,15 @@ export function AddExpenseDialog({ open, onOpenChange, onSave, expense }: AddExp
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.length > 0 && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
-              <ul className="text-sm text-destructive space-y-1">
-                {errors.map((error, index) => (
-                  <li key={index}>• {error}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+                     {errors.length > 0 && (
+             <div className="bg-error/10 border border-error/20 rounded-md p-3">
+               <ul className="text-sm text-error space-y-1">
+                 {errors.map((error, index) => (
+                   <li key={index}>• {error}</li>
+                 ))}
+               </ul>
+             </div>
+           )}
 
           <div className="space-y-2">
             <Label htmlFor="amount" className="flex items-center gap-2">
