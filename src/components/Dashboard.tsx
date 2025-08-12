@@ -1,0 +1,190 @@
+import { useState, useMemo } from 'react';
+import { Plus, Calendar, TrendingUp, Wallet } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ExpenseList } from '@/components/ExpenseList';
+import { AddExpenseDialog } from '@/components/AddExpenseDialog';
+import { MonthSelector } from '@/components/MonthSelector';
+import { formatCurrency, getCurrentMonth, getExpensesForMonth, calculateCategoryTotals } from '@/lib/expense-utils';
+import { getExpenses, getBudgets } from '@/lib/storage';
+
+export function Dashboard() {
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+  const [showAddExpense, setShowAddExpense] = useState(false);
+  
+  const expenses = getExpenses();
+  const budgets = getBudgets();
+  
+  const monthlyExpenses = useMemo(() => 
+    getExpensesForMonth(expenses, selectedMonth), 
+    [expenses, selectedMonth]
+  );
+  
+  const monthlyTotal = useMemo(() => 
+    monthlyExpenses.reduce((sum, expense) => sum + expense.amountCents, 0),
+    [monthlyExpenses]
+  );
+  
+  const categoryTotals = useMemo(() => 
+    calculateCategoryTotals(monthlyExpenses),
+    [monthlyExpenses]
+  );
+  
+  const monthlyBudget = budgets.find(b => 
+    b.yearMonth === selectedMonth && !b.category
+  );
+  
+  const budgetProgress = monthlyBudget 
+    ? (monthlyTotal / monthlyBudget.limitCents) * 100
+    : null;
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 max-w-4xl">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Expense Tracker
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Track your spending and stay on budget
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowAddExpense(true)}
+            className="rounded-full h-14 w-14 shadow-elevated"
+            size="icon"
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </div>
+
+        {/* Month Selector */}
+        <MonthSelector
+          selectedMonth={selectedMonth}
+          onMonthChange={setSelectedMonth}
+        />
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card className="bg-gradient-card shadow-card border-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Spent This Month
+              </CardTitle>
+              <Wallet className="h-4 w-4 text-expense" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-expense">
+                {formatCurrency(monthlyTotal)}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {monthlyExpenses.length} expenses recorded
+              </p>
+            </CardContent>
+          </Card>
+
+          {monthlyBudget && (
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Budget Progress
+                </CardTitle>
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  {budgetProgress !== null ? `${budgetProgress.toFixed(0)}%` : 'N/A'}
+                </div>
+                <div className="w-full bg-secondary rounded-full h-2 mt-2">
+                  <div
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      budgetProgress && budgetProgress > 100 
+                        ? 'bg-destructive' 
+                        : budgetProgress && budgetProgress > 80
+                        ? 'bg-warning'
+                        : 'bg-success'
+                    }`}
+                    style={{ 
+                      width: `${Math.min(budgetProgress || 0, 100)}%` 
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formatCurrency(monthlyBudget.limitCents)} budget
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Top Categories */}
+        {categoryTotals.length > 0 && (
+          <Card className="mb-8 bg-gradient-card shadow-card border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-accent" />
+                Top Spending Categories
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {categoryTotals.slice(0, 3).map((category, index) => {
+                  const percentage = (category.totalCents / monthlyTotal) * 100;
+                  return (
+                    <div key={category.category} className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="font-medium">{category.category}</span>
+                          <span className="text-sm font-semibold">
+                            {formatCurrency(category.totalCents)}
+                          </span>
+                        </div>
+                        <div className="w-full bg-secondary rounded-full h-2">
+                          <div
+                            className="h-2 rounded-full bg-primary transition-all duration-500"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {percentage.toFixed(1)}% • {category.expenseCount} expenses
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Recent Expenses */}
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" />
+              Recent Expenses
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ExpenseList 
+              expenses={monthlyExpenses}
+              onRefresh={() => window.location.reload()}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Add Expense Dialog */}
+        <AddExpenseDialog
+          open={showAddExpense}
+          onOpenChange={setShowAddExpense}
+          onSave={() => {
+            setShowAddExpense(false);
+            window.location.reload();
+          }}
+        />
+      </div>
+    </div>
+  );
+}
