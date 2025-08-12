@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Expense, DEFAULT_CATEGORIES, PAYMENT_METHODS } from '@/types/expense';
 import { formatCurrency, parseCurrency, validateExpense, getCategoryColor } from '@/lib/expense-utils';
 import { addExpense, updateExpense, getSettings } from '@/lib/storage';
+import { sanitizeText, sanitizeAmount } from '@/lib/security';
 import { useToast } from '@/hooks/use-toast';
 
 interface AddExpenseDialogProps {
@@ -89,11 +90,13 @@ export function AddExpenseDialog({ open, onOpenChange, onSave, expense }: AddExp
       setErrors([]);
       onSave();
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to save expense. Please try again.";
       toast({
         title: "Error",
-        description: "Failed to save expense. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
+      console.error('Expense save error:', error);
     }
   };
 
@@ -129,7 +132,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSave, expense }: AddExp
               inputMode="decimal"
               placeholder="0.00"
               value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, amount: sanitizeAmount(e.target.value) })}
               className="text-lg font-medium"
             />
           </div>
@@ -200,7 +203,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSave, expense }: AddExp
               id="note"
               placeholder="Add a note about this expense..."
               value={formData.note}
-              onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, note: sanitizeText(e.target.value, 500) })}
               rows={2}
             />
           </div>

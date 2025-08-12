@@ -1,4 +1,5 @@
 import { Expense, CategoryTotal } from '@/types/expense';
+import { sanitizeAmount } from './security';
 
 export function formatCurrency(amountCents: number, currency: string = 'EUR'): string {
   const amount = amountCents / 100;
@@ -9,10 +10,16 @@ export function formatCurrency(amountCents: number, currency: string = 'EUR'): s
 }
 
 export function parseCurrency(input: string): number {
-  // Remove all non-digit and non-decimal characters
-  const cleaned = input.replace(/[^\d.,]/g, '');
-  const normalized = cleaned.replace(',', '.');
+  // Sanitize input first
+  const sanitized = sanitizeAmount(input);
+  const normalized = sanitized.replace(',', '.');
   const amount = parseFloat(normalized) || 0;
+  
+  // Validate reasonable amount limits (max €1M)
+  if (amount < 0 || amount > 1000000) {
+    throw new Error('Amount must be between 0 and €1,000,000');
+  }
+  
   return Math.round(amount * 100); // Convert to cents
 }
 
@@ -78,8 +85,24 @@ export function validateExpense(expense: Partial<Expense>): string[] {
     errors.push('Amount must be greater than 0');
   }
   
-  if (!expense.category) {
+  if (expense.amountCents && expense.amountCents > 100000000) { // €1M limit
+    errors.push('Amount exceeds maximum limit');
+  }
+  
+  if (!expense.category || expense.category.trim().length === 0) {
     errors.push('Category is required');
+  }
+  
+  if (expense.category && expense.category.length > 50) {
+    errors.push('Category name is too long');
+  }
+  
+  if (expense.note && expense.note.length > 500) {
+    errors.push('Note is too long (max 500 characters)');
+  }
+  
+  if (expense.paymentMethod && expense.paymentMethod.length > 50) {
+    errors.push('Payment method name is too long');
   }
   
   if (expense.paidAt) {
@@ -87,8 +110,17 @@ export function validateExpense(expense: Partial<Expense>): string[] {
     const today = new Date();
     today.setHours(23, 59, 59, 999); // End of today
     
-    if (paidDate > today) {
+    if (isNaN(paidDate.getTime())) {
+      errors.push('Invalid date format');
+    } else if (paidDate > today) {
       errors.push('Date cannot be in the future');
+    }
+    
+    // Check for reasonable date range (not older than 10 years)
+    const tenYearsAgo = new Date();
+    tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
+    if (paidDate < tenYearsAgo) {
+      errors.push('Date cannot be older than 10 years');
     }
   }
   
