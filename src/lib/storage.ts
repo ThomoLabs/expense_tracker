@@ -14,15 +14,48 @@ const EXPENSES_KEY = 'expenses';
 const BUDGETS_KEY = 'budgets';
 const SETTINGS_KEY = 'settings';
 
+export interface Category {
+  id: string;
+  name: string;
+  color?: string;
+}
+
+export interface UserPreferences {
+  currency: string;
+  theme: 'system' | 'light' | 'dark';
+  monthlyBudgetCents: number;
+  categories: Category[];
+  lastUpdated: string;
+}
+
 export interface Settings {
   currency: string;
   categories: string[];
   monthlyBudget?: number; // in cents
+  theme?: 'system' | 'light' | 'dark';
 }
 
 export const defaultSettings: Settings = {
   currency: 'EUR',
   categories: ['Food', 'Groceries', 'Transport', 'Bills', 'Entertainment', 'Health', 'Shopping', 'Other'],
+  theme: 'system',
+};
+
+export const defaultUserPreferences: UserPreferences = {
+  currency: 'EUR',
+  theme: 'system',
+  monthlyBudgetCents: 0,
+  categories: [
+    { id: '1', name: 'Food', color: '#ef4444' },
+    { id: '2', name: 'Groceries', color: '#f97316' },
+    { id: '3', name: 'Transport', color: '#eab308' },
+    { id: '4', name: 'Bills', color: '#22c55e' },
+    { id: '5', name: 'Entertainment', color: '#3b82f6' },
+    { id: '6', name: 'Health', color: '#8b5cf6' },
+    { id: '7', name: 'Shopping', color: '#ec4899' },
+    { id: '8', name: 'Other', color: '#6b7280' },
+  ],
+  lastUpdated: new Date().toISOString(),
 };
 
 // Expenses
@@ -217,4 +250,53 @@ export function saveSettings(settings: Partial<Settings>): void {
   if (!success) {
     throw new Error('Failed to save settings - storage may be full');
   }
+}
+
+// Legacy function for backward compatibility
+export const saveSettingsLegacy = (settings: Settings) => {
+  localStorage.setItem('expense-tracker-settings', JSON.stringify(settings));
+};
+
+export const saveUserPreferences = (prefs: Omit<UserPreferences, 'lastUpdated'>) => {
+  const payload: UserPreferences = {
+    ...prefs,
+    lastUpdated: new Date().toISOString(),
+  };
+  localStorage.setItem('expensesTracker.settings', JSON.stringify(payload));
+};
+
+export const loadUserPreferences = (): UserPreferences | null => {
+  const data = localStorage.getItem('expensesTracker.settings');
+  return data ? JSON.parse(data) : null;
+};
+
+// Convert old Settings format to new UserPreferences format
+export function convertSettingsToUserPreferences(settings: Settings): UserPreferences {
+  return {
+    currency: settings.currency,
+    theme: settings.theme || 'system',
+    monthlyBudgetCents: settings.monthlyBudget || 0,
+    categories: settings.categories.map((name, index) => ({
+      id: (index + 1).toString(),
+      name,
+      color: defaultUserPreferences.categories[index]?.color || '#6b7280'
+    })),
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
+// Get user preferences, converting from old format if necessary
+export function getUserPreferences(): UserPreferences {
+  // Try to load new format first
+  const newPrefs = loadUserPreferences();
+  if (newPrefs) return newPrefs;
+  
+  // Fall back to old format and convert
+  const oldSettings = getSettings();
+  const converted = convertSettingsToUserPreferences(oldSettings);
+  
+  // Save in new format for next time
+  saveUserPreferences(converted);
+  
+  return converted;
 }

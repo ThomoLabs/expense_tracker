@@ -1,17 +1,22 @@
 import { useState, useMemo } from 'react';
-import { Plus, Calendar, TrendingUp, Wallet } from 'lucide-react';
+import { Plus, Calendar, TrendingUp, Wallet, Settings } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ExpenseList } from '@/components/ExpenseList';
 import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 import { MonthSelector } from '@/components/MonthSelector';
 import { ExpensePieChart } from '@/components/ExpensePieChart';
-import { formatCurrency, getCurrentMonth, getExpensesForMonth, calculateCategoryTotals } from '@/lib/expense-utils';
+import { SettingsScreen } from '@/components/SettingsScreen';
+import { getCurrentMonth, getExpensesForMonth, calculateCategoryTotals } from '@/lib/expense-utils';
 import { getExpenses, getBudgets } from '@/lib/storage';
+import { useMoney } from '@/contexts/MoneyContext';
 
 export function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  const { format, getConversionInfo } = useMoney();
   
   const expenses = getExpenses();
   const budgets = getBudgets();
@@ -51,14 +56,29 @@ export function Dashboard() {
             <p className="text-muted-foreground mt-1">
               Track your spending and stay on budget
             </p>
+            {getConversionInfo() && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {getConversionInfo()}
+              </p>
+            )}
           </div>
-          <Button
-            onClick={() => setShowAddExpense(true)}
-            className="rounded-full h-14 w-14 shadow-elevated"
-            size="icon"
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowSettings(true)}
+              className="h-10 w-10"
+            >
+              <Settings className="h-5 w-5" />
+            </Button>
+            <Button
+              onClick={() => setShowAddExpense(true)}
+              className="rounded-full h-14 w-14 shadow-elevated"
+              size="icon"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </div>
         </div>
 
         {/* Month Selector */}
@@ -78,7 +98,7 @@ export function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-expense">
-                {formatCurrency(monthlyTotal)}
+                {format(monthlyTotal)}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {monthlyExpenses.length} expenses recorded
@@ -113,7 +133,7 @@ export function Dashboard() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {formatCurrency(monthlyBudget.limitCents)} budget
+                  {format(monthlyBudget.limitCents)} budget
                 </p>
               </CardContent>
             </Card>
@@ -139,7 +159,7 @@ export function Dashboard() {
                         <div className="flex justify-between items-center mb-1">
                           <span className="font-medium">{category.category}</span>
                           <span className="text-sm font-semibold">
-                            {formatCurrency(category.totalCents)}
+                            {format(category.totalCents)}
                           </span>
                         </div>
                         <div className="w-full bg-secondary rounded-full h-2">
@@ -194,6 +214,11 @@ export function Dashboard() {
             window.location.reload();
           }}
         />
+
+        {/* Settings Screen */}
+        {showSettings && (
+          <SettingsScreen onClose={() => setShowSettings(false)} />
+        )}
       </div>
     </div>
   );
