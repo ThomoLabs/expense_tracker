@@ -7,9 +7,12 @@ import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 import { MonthSelector } from '@/components/MonthSelector';
 import { ExpensePieChart } from '@/components/ExpensePieChart';
 import { SettingsScreen } from '@/components/SettingsScreen';
+import { ExitIndicator } from '@/components/ExitIndicator';
 import { getCurrentMonth, getExpensesForMonth, calculateCategoryTotals } from '@/lib/expense-utils';
 import { getExpenses, getBudgets } from '@/lib/storage';
 import { useMoney } from '@/contexts/MoneyContext';
+import { useAndroidBackButton } from '@/hooks/useAndroidBackButton';
+import { useSystemBarsContext } from '@/contexts/SystemBarsContext';
 
 export function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
@@ -17,6 +20,19 @@ export function Dashboard() {
   const [showSettings, setShowSettings] = useState(false);
   
   const { format, getConversionInfo } = useMoney();
+  const { isEdgeToEdge, isSafeAreasEnabled } = useSystemBarsContext();
+  
+  // Handle Android back button behavior
+  const { showExitIndicator, hideExitIndicator } = useAndroidBackButton({
+    isModalOpen: showAddExpense || showSettings,
+    onModalClose: () => {
+      if (showAddExpense) {
+        setShowAddExpense(false);
+      } else if (showSettings) {
+        setShowSettings(false);
+      }
+    }
+  });
   
   const expenses = getExpenses();
   const budgets = getBudgets();
@@ -45,8 +61,8 @@ export function Dashboard() {
     : null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <div className={`min-h-screen bg-background ${isEdgeToEdge ? 'edge-to-edge' : ''}`}>
+      <div className={`container mx-auto px-4 py-6 max-w-4xl ${isSafeAreasEnabled ? 'safe-area' : ''}`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -121,14 +137,14 @@ export function Dashboard() {
                 <div className="w-full bg-muted rounded-full h-2 mt-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-300 ${
-                      budgetProgress && budgetProgress > 100 
-                        ? 'bg-error' 
+                      budgetProgress && budgetProgress > 100
+                        ? 'bg-error'
                         : budgetProgress && budgetProgress > 80
                         ? 'bg-warning'
                         : 'bg-success'
                     }`}
-                    style={{ 
-                      width: `${Math.min(budgetProgress || 0, 100)}%` 
+                    style={{
+                      width: `${Math.min(budgetProgress || 0, 100)}%`
                     }}
                   />
                 </div>
@@ -142,7 +158,7 @@ export function Dashboard() {
 
         {/* Top Categories */}
         {categoryTotals.length > 0 && (
-          <Card className="mb-8 bg-gradient-card shadow-card border-0">
+          <Card className="mb-8 bg-card-elevated shadow-elevated border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-accent" />
@@ -190,7 +206,7 @@ export function Dashboard() {
         </div>
 
         {/* Recent Expenses */}
-        <Card className="bg-gradient-card shadow-card border-0">
+        <Card className="bg-card-elevated shadow-elevated border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
@@ -205,20 +221,27 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Add Expense Dialog */}
-        <AddExpenseDialog
-          open={showAddExpense}
-          onOpenChange={setShowAddExpense}
-          onSave={() => {
-            setShowAddExpense(false);
-            window.location.reload();
-          }}
-        />
+        {/* Modals */}
+        {showAddExpense && (
+          <AddExpenseDialog
+            open={showAddExpense}
+            onOpenChange={setShowAddExpense}
+            onSave={() => {
+              setShowAddExpense(false);
+              window.location.reload();
+            }}
+          />
+        )}
 
-        {/* Settings Screen */}
         {showSettings && (
           <SettingsScreen onClose={() => setShowSettings(false)} />
         )}
+
+        {/* Exit Indicator */}
+        <ExitIndicator
+          isVisible={showExitIndicator}
+          onClose={hideExitIndicator}
+        />
       </div>
     </div>
   );

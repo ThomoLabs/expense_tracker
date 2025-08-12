@@ -1,0 +1,5 @@
+[33m0aa4430[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: Implement comprehensive WCAG AA compliant theme system
+[33mf420068[m fix: Update ExpensePieChart and ExpenseList to use MoneyContext for currency conversion
+[33m4aa0f35[m feat: Implement comprehensive Settings screen with currency conversion and WCAG AA compliance
+[33m49dad3b[m Implement security fixes
+[33me6c02af[m Add category spending chart

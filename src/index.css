@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body text, ≥3:1 for large text).
+All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body text, ≥3:1 for large text/icons).
 */
 
 @layer base {
@@ -83,6 +83,12 @@ All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* System bar colors - Light theme */
+    --status-bar-bg: 210 17% 98%;     /* Match background */
+    --status-bar-icons: 215 25% 27%;  /* Dark icons on light background */
+    --nav-bar-bg: 210 17% 98%;        /* Match background */
+    --nav-bar-icons: 215 25% 27%;     /* Dark icons on light background */
   }
 
   .dark {
@@ -99,63 +105,162 @@ All colors MUST be HSL and meet WCAG AA contrast requirements (≥4.5:1 for body
     --primary: 224 71% 76%;           /* Light blue - meets contrast on dark */
     --primary-foreground: 222 47% 11%; /* Dark text on light blue - meets contrast */
     
-    --secondary: 217 33% 17%;         /* Darker gray - elevated surface */
-    --secondary-foreground: 210 40% 98%; /* Light text on dark gray */
+    --secondary: 217 33% 17%;         /* Dark gray */
+    --secondary-foreground: 210 40% 98%; /* Light text on dark */
     
-    --muted: 217 33% 17%;             /* Darker gray */
+    --muted: 217 33% 17%;             /* Dark gray */
     --muted-foreground: 215 20% 65%;  /* Medium gray text - meets contrast on dark */
     
-    --accent: 217 33% 17%;            /* Darker gray */
-    --accent-foreground: 210 40% 98%; /* Light text on dark gray */
+    --accent: 165 82% 61%;            /* Light teal - meets contrast on dark */
+    --accent-foreground: 222 47% 11%; /* Dark text on light teal - meets contrast */
     
-    --destructive: 0 63% 31%;         /* Darker red - meets contrast with light text */
-    --destructive-foreground: 210 40% 98%; /* Light text on dark red */
-    --error: 0 72% 61%;                /* Light red - meets contrast */
+    --destructive: 0 72% 61%;         /* Light red - meets contrast on dark */
+    --destructive-foreground: 222 47% 11%; /* Dark text on light red - meets contrast */
+    
+    --border: 215 25% 27%;            /* Dark gray border */
+    --input: 215 25% 27%;             /* Dark gray input border */
+    --ring: 224 71% 76%;              /* Light blue ring - matches primary */
+    
+    /* Surface colors for elevated elements */
+    --surface: 222 47% 11%;            /* Same as background */
+    --surface-elevated: 217 33% 17%;   /* Elevated surface */
+    
+    /* Expense Category Colors - Dark mode high contrast versions */
+    --category-food: 25 95% 63%;       /* Light orange - meets contrast */
+    --category-groceries: 120 76% 60%; /* Light green - meets contrast */
+    --category-transport: 221 83% 63%; /* Light blue - meets contrast */
+    --category-bills: 271 81% 66%;     /* Light purple - meets contrast */
+    --category-entertainment: 340 82% 62%; /* Light pink - meets contrast */
+    --category-health: 171 77% 74%;    /* Light teal - meets contrast */
+    --category-shopping: 291 64% 52%;  /* Light purple - meets contrast */
+    --category-other: 215 20% 75%;     /* Light gray - meets contrast */
+    
+    /* Financial UI specific colors - Dark mode */
     --success: 120 76% 60%;            /* Light green - meets contrast */
-    --warning: 38 92% 60%;            /* Light orange - meets contrast */
+    --warning: 38 92% 60%;             /* Light orange - meets contrast */
+    --error: 0 72% 61%;                /* Light red - meets contrast */
+    --expense-red: 0 72% 61%;          /* Light red - meets contrast */
+    --income-green: 120 76% 60%;       /* Light green - meets contrast */
     
-    --border: 217 33% 17%;            /* Dark gray border */
-    --input: 217 33% 17%;             /* Dark gray input border */
-    --ring: 212 27% 84%;              /* Light gray ring */
+    /* Gradients - Dark mode */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(224 71% 86%));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(120 76% 65%));
+    --gradient-card: linear-gradient(145deg, hsl(222 47% 11%), hsl(217 33% 17%));
     
-    /* Surface colors for elevated elements - slightly lighter than background */
-    --surface: 222 47% 11%;           /* Same as background */
-    --surface-elevated: 217 33% 17%;  /* Slightly elevated surface */
+    /* Shadows - Dark mode */
+    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 8px 24px -4px hsl(0 0% 0% / 0.4);
     
-    /* Sidebar colors for dark mode */
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224 71% 76%;
+    /* Sidebar colors - Dark mode */
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 98%;
     --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 25% 27%;
+    --sidebar-ring: 224 71% 76%;
 
-@layer base {
-  * {
-    @apply border-border;
+    /* System bar colors - Dark theme */
+    --status-bar-bg: 222 47% 11%;     /* Match background */
+    --status-bar-icons: 210 40% 98%;  /* Light icons on dark background */
+    --nav-bar-bg: 222 47% 11%;        /* Match background */
+    --nav-bar-icons: 210 40% 98%;     /* Light icons on dark background */
+  }
+
+  /* Edge-to-edge theming and safe areas */
+  html {
+    /* Enable safe area support */
+    height: 100%;
+    /* Ensure content can draw behind system bars */
+    overflow-x: hidden;
   }
 
   body {
-    @apply bg-background text-foreground;
+    /* Edge-to-edge layout */
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+    
+    /* Safe area padding using CSS environment variables */
+    padding-top: max(env(safe-area-inset-top), 0px);
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+    padding-left: max(env(safe-area-inset-left), 0px);
+    padding-right: max(env(safe-area-inset-right), 0px);
+    
+    /* Background extends to edges */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    
+    /* Smooth transitions for theme changes */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+  }
+
+  /* Safe area utility classes */
+  .safe-area-top {
+    padding-top: max(env(safe-area-inset-top), 12px);
   }
   
+  .safe-area-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 12px);
+  }
+  
+  .safe-area-left {
+    padding-left: max(env(safe-area-inset-left), 12px);
+  }
+  
+  .safe-area-right {
+    padding-right: max(env(safe-area-inset-right), 12px);
+  }
+  
+  .safe-area {
+    padding: max(env(safe-area-inset-top), 12px) 
+             max(env(safe-area-inset-right), 12px) 
+             max(env(safe-area-inset-bottom), 12px) 
+             max(env(safe-area-inset-left), 12px);
+  }
+
+  /* System bar theming */
+  .status-bar {
+    background-color: hsl(var(--status-bar-bg));
+    color: hsl(var(--status-bar-icons));
+  }
+  
+  .nav-bar {
+    background-color: hsl(var(--nav-bar-bg));
+    color: hsl(var(--nav-bar-icons));
+  }
+
   /* Ensure proper contrast for all interactive elements */
   button, input, select, textarea {
     @apply text-foreground bg-background border-border;
   }
-  
+
   /* High contrast focus indicators */
   *:focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
-  
-  /* Ensure proper contrast for disabled states */
-  *:disabled {
-    opacity: 0.6;
+
+  /* Mobile-specific optimizations */
+  @media (max-width: 768px) {
+    body {
+      /* Ensure content doesn't get cut off by system bars on mobile */
+      padding-top: max(env(safe-area-inset-top), 8px);
+      padding-bottom: max(env(safe-area-inset-bottom), 8px);
+    }
+  }
+
+  /* PWA/Standalone app optimizations */
+  @media (display-mode: standalone) {
+    body {
+      /* Full edge-to-edge in standalone mode */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
   }
 }
