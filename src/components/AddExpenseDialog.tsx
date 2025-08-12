@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Expense, DEFAULT_CATEGORIES, PAYMENT_METHODS } from '@/types/expense';
-import { formatCurrency, parseCurrency, validateExpense, getCategoryColor } from '@/lib/expense-utils';
+import { parseCurrency, validateExpense, getCategoryColor } from '@/lib/expense-utils';
 import { addExpense, updateExpense, getSettings } from '@/lib/storage';
 import { sanitizeText, sanitizeAmount } from '@/lib/security';
 import { useToast } from '@/hooks/use-toast';
+import { useMoney } from '@/contexts/MoneyContext';
 
 interface AddExpenseDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface AddExpenseDialogProps {
 
 export function AddExpenseDialog({ open, onOpenChange, onSave, expense }: AddExpenseDialogProps) {
   const { toast } = useToast();
+  const { format } = useMoney();
   const settings = getSettings();
   
   const [formData, setFormData] = useState({
@@ -77,13 +79,13 @@ export function AddExpenseDialog({ open, onOpenChange, onSave, expense }: AddExp
         updateExpense(expense.id, expenseData);
         toast({
           title: "Expense updated",
-          description: `${formatCurrency(amountCents)} expense updated successfully`,
+          description: `${format(amountCents)} expense updated successfully`,
         });
       } else {
         addExpense(expenseData);
         toast({
           title: "Expense added",
-          description: `${formatCurrency(amountCents)} expense added successfully`,
+          description: `${format(amountCents)} expense added successfully`,
         });
       }
       

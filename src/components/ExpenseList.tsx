@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Trash2, Edit, Calendar, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Expense } from '@/types/expense';
-import { formatCurrency, getCategoryColor } from '@/lib/expense-utils';
+import { getCategoryColor } from '@/lib/expense-utils';
 import { deleteExpense } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
 import { AddExpenseDialog } from '@/components/AddExpenseDialog';
+import { useMoney } from '@/contexts/MoneyContext';
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -14,6 +15,7 @@ interface ExpenseListProps {
 
 export function ExpenseList({ expenses, onRefresh }: ExpenseListProps) {
   const { toast } = useToast();
+  const { format } = useMoney();
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
   const handleDelete = (expense: Expense) => {
@@ -21,7 +23,7 @@ export function ExpenseList({ expenses, onRefresh }: ExpenseListProps) {
     if (success) {
       toast({
         title: "Expense deleted",
-        description: `${formatCurrency(expense.amountCents)} expense removed`,
+        description: `${format(expense.amountCents)} expense removed`,
       });
       onRefresh();
     }
@@ -85,7 +87,7 @@ export function ExpenseList({ expenses, onRefresh }: ExpenseListProps) {
                 <div className="flex items-center gap-2">
                   <div className="text-right">
                     <div className="font-semibold text-expense">
-                      {formatCurrency(expense.amountCents, expense.currency)}
+                      {format(expense.amountCents)}
                     </div>
                   </div>
                   

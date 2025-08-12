@@ -3,7 +3,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import { CategoryTotal } from '@/types/expense';
-import { formatCurrency, getCategoryColor } from '@/lib/expense-utils';
+import { getCategoryColor } from '@/lib/expense-utils';
+import { useMoney } from '@/contexts/MoneyContext';
 
 interface ExpensePieChartProps {
   categoryTotals: CategoryTotal[];
@@ -48,6 +49,8 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 };
 
 export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, onCategoryClick }: ExpensePieChartProps) {
+  const { format } = useMoney();
+  
   const chartData = useMemo(() => {
     if (categoryTotals.length === 0) return [];
 
@@ -108,7 +111,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
           <p className="font-semibold">{data.category}</p>
           <p className="text-sm text-muted-foreground">
-            {formatCurrency(data.totalCents)} ({data.percentage}%)
+            {format(data.totalCents)} ({data.percentage}%)
           </p>
           <p className="text-xs text-muted-foreground">
             {data.expenseCount} expense{data.expenseCount !== 1 ? 's' : ''}
@@ -162,7 +165,7 @@ export function ExpensePieChart({ categoryTotals, monthlyTotal, selectedMonth, o
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center">
               <div className="text-xs text-muted-foreground">Total</div>
-              <div className="text-lg font-bold">{formatCurrency(monthlyTotal)}</div>
+              <div className="text-lg font-bold">{format(monthlyTotal)}</div>
             </div>
           </div>
         </div>
